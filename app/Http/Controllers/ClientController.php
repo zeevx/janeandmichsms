@@ -6,18 +6,17 @@ use App\Models\Client;
 use App\Models\Message;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 class ClientController extends Controller
 {
 
     private function sendMessage($message, $recipients)
     {
-        $account_sid = getenv("TWILIO_SID");
-        $auth_token = getenv("TWILIO_AUTH_TOKEN");
-        $twilio_number = getenv("TWILIO_NUMBER");
-        $client = new \Twilio\Rest\Client($account_sid, $auth_token);
-        $client->messages->create($recipients,
-                ['from' => $twilio_number, 'body' => $message] );
+        $token = env('SMS_TOKEN');
+        $from = env('SMS_FROM');
+        $url = "https://www.bulksmsnigeria.com/api/v1/sms/create?api_token=".$token."&from=".$from."&to=".$recipients."&body=".$message."&dnd=2";
+        Http::get($url);
     }
 
     /**
